@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+/*CSS goes here.
+.subunit.SCT { fill: #ddc; }
+.subunit.WLS { fill: #cdd; }
+.subunit.NIR { fill: #cdc; }
+.subunit.ENG { fill: #dcd; }
+.subunit.IRL { display: none; }
+*/
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script>
+/*
+function loadJson(resource) {
+    d3.json(resource, function(error, result) {
+       console.log('Failed to load', resource)
+    }
+}
+*/
+var width = 960,
+    height = 1160;
+
+/*var projection = d3.geo.mercator()
+     .scale(1000)
+     .translate([width/2, height/2]);
+*/
+/*= d3.geo.albers()
+    .center([0, 55.4])
+    .rotate([4.4, 0])
+    .parallels([50, 60])
+    .scale(1200 * 5)
+    .translate([width / 2, height / 2]);
+*/
+var path = d3.geo.path()
+   // .projection(projection);
+   .projection(d3.geo.mercator()
+     .center([-73.93968, 40.73254])
+     .scale(500000))
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("nc_topo.json", function(error, nc) {
+ console.log(nc)
+   svg.append("path")
+       .datum(topojson.feature(nc, nc.objects.newtown_creek_4326))
+       .attr("d", path);
+});
+
+</script>
