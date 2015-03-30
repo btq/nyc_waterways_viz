@@ -1,42 +1,45 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
+<head>
+	<title> NYC Currents Visualization </title>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="/css/styles.css"/>
 
-/*CSS goes here.
-.subunit.SCT { fill: #ddc; }
-.subunit.WLS { fill: #cdd; }
-.subunit.NIR { fill: #cdc; }
-.subunit.ENG { fill: #dcd; }
-.subunit.IRL { display: none; }
-*/
+</head>
 
-</style>
 <body>
-  <div id="display" data-topo-water="/data/nyc_water_topo.json" data-topo-land="/data/nyc_land_topo.json" >
-    <div id="map">
-       <svg id="map-svg" xmlns="http://www.w4.org/2000/svg" version="1.1"></svg>
-    </div>
-    <div id="field">
-       <canvas id="field-canvas"></canvas>
-    </div>
-    <div id="overlay">
-       <canvas id="overlay-canvas"></canvas>
-    </div>
-    <div id="details">
-        <h1 id="type">&nbsp;</h1>
-        <h1 id="type2">NYC Wind Speed</h1>
-        <h3 id="sample-label" style="display: none">&nbsp;</h3>
-        <h2 id="status">&nbsp;</h2>
-        <h2 id="location">&nbsp;</h2>
-        <h2 id="point-details">&nbsp;</h2>
-    </div>
-  </div>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
-<script src="/js/mvi.js"</script>
-<script src="/js/wind.js"</script>
-<script>
-/*
+	<div id="display" data-topography="/data/nyc_water_topo.json" data-samples="/data/currents/current.json"
+                      data-type="current" data-date="" >
+		<div id="map">
+			<svg id="map-svg" xmlns="http://www.w4.org/2000/svg" version="1.1"></svg>
+		</div>
+		<div id="field">
+			<canvas id="field-canvas"></canvas>
+		</div>
+		<div id="overlay">
+			<canvas id="overlay-canvas"></canvas>
+		</div>
+		<div id="details">
+			<h1 id="type">&nbsp;</h1>
+			<h1 id="type2">NYC Tidal Currents</h1>
+			<h3 id="sample-label" style="display: none">&nbsp;</h3>
+			<h2 id="status">&nbsp;</h2>
+			<h2 id="location">&nbsp;</h2>
+			<h2 id="point-details">&nbsp;</h2>
+		</div>
+		<div id="arrow">?</div>
+        <div id="notice">NYC Tidal Currents<a href="http://localhost:8008/nyc_water.html">woo</a></div>
+	</div>
+
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="/js/when.js" charset="utf-8"></script>
+	<script src="/js/mvi.js" charset="utf-8"></script>
+	<script src="/js/currents.js" charset="utf-8"></script>
+<!--
+/*	<script>
+
+	/*
 function loadJson(resource) {
     d3.json(resource, function(error, result) {
        console.log('Failed to load', resource)
@@ -75,3 +78,6 @@ d3.json("data/nyc_water_topo.json", function(error, h20) {
 });
 
 </script>
+-->
+</body>
+</html>
