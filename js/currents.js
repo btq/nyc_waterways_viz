@@ -207,7 +207,7 @@
         var s = 1 / Math.max((p1[0] - p0[0]) / view.width, (p0[1] - p1[1]) / view.height) * 0.95;
         // Move the center to (0, 0) in pixel space.
         var t = [view.width / 2, view.height / 2];
-
+		
         return projection.scale(s).translate(t);
     }
 
@@ -626,7 +626,7 @@
                 }
                 var date = data[0].date.replace(":00+09:00", "");
                 d3.select(DISPLAY_ID).attr("data-date", displayData.date = date);
-                displayStatus(date + " JST");
+                displayStatus(date + " EST");
                 d.resolve(createField(columns));
                 log.timeEnd("interpolating field");
             }
