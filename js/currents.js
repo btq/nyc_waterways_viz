@@ -565,7 +565,7 @@
         });
 
         if (points.length < 5) {
-            return d.reject("東京都環境局がデータを調整中");
+            return d.reject("NOAA station adjusting the data");
         }
 
         var interpolate = mvi.inverseDistanceWeighting(points, 5);  // Use the five closest neighbors
