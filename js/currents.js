@@ -624,7 +624,7 @@
                         return;
                     }
                 }
-                var date = data[0].date.replace(":00+09:00", "");
+                var date = data[0].date.replace(":00-05:00", "");
                 d3.select(DISPLAY_ID).attr("data-date", displayData.date = date);
                 displayStatus(date + " EST");
                 d.resolve(createField(columns));
