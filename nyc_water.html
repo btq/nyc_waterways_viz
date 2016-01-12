@@ -8,7 +8,7 @@
 </head>
 
 <body>
-	<div id="display" data-topography="/data/nyc_water_topo.json" data-samples="/data/currents/current.json"
+	<div id="display" data-topography="/data/nyc_water_topo_small_man.json" data-samples="/data/currents/current.json"
                       data-type="current" data-date="" >
 		<div id="map">
 			<svg id="map-svg" xmlns="http://www.w4.org/2000/svg" version="1.1"></svg>
@@ -27,10 +27,28 @@
 			<h2 id="location">&nbsp;</h2>
 			<h2 id="point-details">&nbsp;</h2>
 		</div>
-		<div id="arrow">?</div>
-        <div id="notice">NYC Tidal Currents<a href="http://localhost:8008/nyc_water.html">woo</a></div>
+		<div id="arrow">↓</div>
+        <div id="notice">NYC Tidal Currents<a href="http://localhost:8000/nyc_water.html">woo</a></div>
 	</div>
 
+	<div id="about">
+		<h1>About</h1>
+		<span>Control | </span>
+			<span class="text-button" id="previous-day">«prev day</span><span> – </span>
+            <span class="text-button" id="previous-hour">1prev hour</span><span> – </span>
+            <span class="text-button" id="next-hour">1next hour</span><span> – </span>
+            <span class="text-button" id="next-day">next day»</span><span> – </span>
+            <span class="text-button" id="current-conditions">present conditions</span><span> – </span>
+            <span class="text-button" id="show-location">show location</span><p></p>
+        <span>Overlay | </span>
+            <span class="text-button" id="wind">None</span><span> – </span><p></p>
+    <p>Tidal Current Data | <a href="http://tidesandcurrents.noaa.gov/noaacurrents/Stations?g=458">NOAA</a></p>
+    <p>Map Data | <a href="http://www.census.gov/geo/maps-data/data/tiger-line.html">US Census Bureau</a></p>
+    <p>Authodr | Brian T. Quinn <a href="http://briantquinn.com">website</a></p>
+    <p>Source | <a href="http://github.com/btq/nyc_waterways_viz">github.com/btq/nyc_waterways_viz</a></p>
+    <p>Inspiration | <a href="http://air.nullschool.net/">Tokyo wind map</a>,<a href="http://hint.fm/wind/">HINT.FM wind map</a></p>
+    </div>
+    
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="http://d3js.org/topojson.v1.min.js"></script>
 	<script src="/js/when.js" charset="utf-8"></script>
