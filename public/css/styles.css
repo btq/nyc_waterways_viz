@@ -1,0 +1,224 @@
+html, body, div, span, h4, h5, h6, p, a svg, canvas {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: 'Open Sans Condensed',Helvetica,arial,sans-serif;
+    -webkit-font-smoothing: subpixel-antialiased; /* safari disables subpixel antialiasing for some reason */
+}
+
+@media (max-width: 825px), (max-height: 700px) {
+    html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, svg, canvas {
+        font-size: 0.8em;
+    }
+}
+
+body {
+    background: #202020;
+    line-height: 0;
+    color: #eee;
+}
+
+.station {
+    fill: #f44;
+}
+
+#warn {
+    margin-top: 25%;
+    margin-left: 2%;
+}
+
+#position {
+    fill: none;
+    stroke: #3aff3a;
+    stroke-width: 1.5;
+}
+
+#display {
+    cursor: default;
+    position: relative;
+}
+
+/* Fill-screen class for fixed size - no stretching on resize */
+.fill-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1232px;
+    height: 2000px;
+}
+
+/* SVG map layer - bottommost, transformed by zoom/pan */
+#map-svg {
+    z-index: 1;
+}
+
+/* Canvas animation layer - above map, screen-space particle animation */
+#field-canvas {
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Canvas overlay layer - above animation, color overlays */
+#overlay-canvas {
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* SVG foreground layer - interactive elements, transformed by zoom/pan */
+#foreground {
+    z-index: 4;
+}
+
+#info-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+#details {
+    position: absolute;
+    top: 3%;
+    left: 2%;
+    pointer-events: auto;
+}
+
+#arrow {
+    position: absolute;
+    bottom: 1%;
+    left: 2%;
+    color: #888;
+    font-size: 1.0em;
+}
+
+#notice {
+    position: absolute;
+    bottom: 4%;
+    right: 1%;
+    font-size: 1.25rem;
+}
+
+#about {
+    margin-top: 1.25em;
+    padding-bottom: 1em;
+    position: absolute;
+    left: 2%;
+}
+
+h1, h2 {
+    font-size: 2.4em;
+}
+
+h3 {
+    font-size: 1.5em;
+    line-height: 2.4em;
+}
+
+p, span {
+    font-size: 1.75em;
+}
+
+
+.sup {
+    position: relative;
+   	bottom: 0.3em;
+   	font-size: 0.6em;
+}
+
+.sub {
+    position: relative;
+   	top: 0.3em;
+   	font-size: 0.6em;
+}
+
+a, .text-button {
+    color: #888;
+}
+
+/* SVG boundary styling */
+.out-boundary {
+    fill: none;
+    stroke: #377;
+    stroke-width: 1.5;
+}
+
+.in-boundary {
+    fill: none;
+    stroke: #88b;
+    stroke-width: 0.5;
+}
+
+.station {
+    fill: #f44;
+}
+
+#position {
+    fill: none;
+    stroke: #3aff3a;
+    stroke-width: 1.5;
+}
+
+a:hover, a:focus {
+    color: #fff;
+    transition: color 125ms ease-in;
+    -webkit-transition: color 125ms ease-in;
+}
+
+.no-touch .text-button:hover, .no-touch .text-button:focus {
+    color: #fff;
+    transition: color 125ms ease-in;
+    -webkit-transition: color 125ms ease-in;
+    cursor: default;
+}
+
+.text-button:active {
+    color: #fff;
+    transition: color 25ms ease-in;
+    -webkit-transition: color 25ms ease-in;
+}
+
+#clear-points {
+    display: block;
+    margin-top: 1.5em;
+    padding: 10px 0;
+    line-height: 1.2em;
+}
+
+/* Time Controls Styling */
+#time-controls h3 {
+    line-height: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+#time-controls button {
+    min-width: 48px;
+    min-height: 48px;
+    margin: 2px;
+    padding: 4px 12px;
+    font-size: 1.2em;
+    background: #333;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Open Sans Condensed', Helvetica, arial, sans-serif;
+    vertical-align: middle;
+}
+
+#time-controls button:hover, #time-controls button:focus {
+    background: #444;
+    border-color: #eee;
+    outline: none;
+}
+
+#time-controls button:active {
+    background: #555;
+}
+
+#time-controls div {
+    line-height: normal;
+    margin-bottom: 4px;
+}

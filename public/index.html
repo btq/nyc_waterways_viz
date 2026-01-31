@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>  
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QLFPS90QKZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QLFPS90QKZ');
+    </script>
+
+	<title> NYC Currents Visualization </title>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="css/styles.css"/>
+
+</head>
+
+<body>
+	<div id="display" data-topography="data/nyc_water_topo.json" data-samples="data/currents/partitioned/index.json"
+                      data-type="current" data-date="" >
+		<!-- SVG map layer (bottom) - transformed by zoom/pan -->
+		<svg id="map-svg" class="fill-screen" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg>
+		<!-- Canvas animation layer - particle animation in screen space -->
+		<canvas id="field-canvas" class="fill-screen"></canvas>
+		<!-- Canvas overlay layer - color overlays in screen space -->
+		<canvas id="overlay-canvas" class="fill-screen"></canvas>
+		<!-- SVG foreground layer (top) - interactive overlays, transformed by zoom/pan -->
+		<svg id="foreground" class="fill-screen" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg>
+		
+		<!-- Info panel overlay -->
+		<div id="info-panel">
+			<!-- Details panel -->
+			<div id="details">
+				<h1 id="type">&nbsp;</h1>
+				<h1 id="type2">NYC Tidal Currents</h1>
+				<h3 id="sample-label" style="display: none">&nbsp;</h3>
+				<h2 id="status">&nbsp;</h2>
+				<h2 id="location">&nbsp;</h2>
+				<h2 id="point-details">&nbsp;</h2>		
+	            <span class="text-button" id="clear-points">Clear Points</span>		</div>
+            
+            <div id="time-controls" style="position: absolute; bottom: 50px; left: 20px; pointer-events: auto;">
+                <h3>Time Controls</h3>
+                <div>
+                    <button id="sub-week">-1 Week</button>
+                    <button id="add-week">+1 Week</button>
+                </div>
+                <div>
+                    <button id="sub-day">-1 Day</button>
+                    <button id="add-day">+1 Day</button>
+                </div>
+                <div>
+                    <button id="sub-hour">-1 Hour</button>
+                    <button id="add-hour">+1 Hour</button>
+                </div>
+                <div>
+                    <button id="sub-15">-15 Min</button>
+                    <button id="add-15">+15 Min</button>
+                </div>  
+            </div>
+		</div>
+    </div>
+<!--
+	<div id="about">
+		<h1>About</h1>
+		<span>Control | </span>
+			<span class="text-button" id="previous-day">«prev day</span><span> – </span>
+            <span class="text-button" id="previous-hour">1prev hour</span><span> – </span>
+            <span class="text-button" id="next-hour">1next hour</span><span> – </span>
+            <span class="text-button" id="next-day">next day»</span><span> – </span>
+            <span class="text-button" id="current-conditions">present conditions</span><span> – </span>
+            <span class="text-button" id="show-location">show location</span><span> – </span>
+            <span class="text-button" id="clear-points">clear points</span><p></p>
+        <span>Overlay | </span>
+            <span class="text-button" id="wind">None</span><span> – </span><p></p>
+    <p>Tidal Current Data | <a href="http://tidesandcurrents.noaa.gov/noaacurrents/Stations?g=458">NOAA</a></p>
+    <p>Map Data | <a href="http://www.census.gov/geo/maps-data/data/tiger-line.html">US Census Bureau</a></p>
+    <p>Authodr | Brian T. Quinn <a href="http://briantquinn.com">website</a></p>
+    <p>Source | <a href="http://github.com/btq/nyc_waterways_viz">github.com/btq/nyc_waterways_viz</a></p>
+    <p>Inspiration | <a href="http://air.nullschool.net/">Tokyo wind map</a>,<a href="http://hint.fm/wind/">HINT.FM wind map</a></p>
+    </div>
+-->    
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<script src="https://d3js.org/topojson.v3.min.js"></script>
+	<script src="js/mvi.js" charset="utf-8"></script>
+	<script src="js/currents.js" charset="utf-8"></script>
+
+    <!--
+/*	<script>
+
+	/*
+function loadJson(resource) {
+    d3.json(resource, function(error, result) {
+       console.log('Failed to load', resource)
+    }
+}
+*/
+var width = 960,
+    height = 1160;
+
+/*var projection = d3.geo.mercator()
+     .scale(800)
+     .translate([width/2, height/2]);
+*/
+/*= d3.geo.albers()
+    .center([0, 55.4])
+    .rotate([4.4, 0])
+    .parallels([50, 60])
+    .scale(1200 * 5)
+    .translate([width / 2, height / 2]);
+*/
+var path = d3.geo.path()
+   // .projection(projection);
+   .projection(d3.geo.mercator()
+     .center([-73.93968, 40.73254])
+     .scale(500000))
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("data/nyc_water_topo.json", function(error, h20) {
+ console.log(h20)
+   svg.append("path")
+       .datum(topojson.feature(h20, h20.objects.nyc_water))
+       .attr("d", path);
+});
+
+</script>
+-->
+</body>
+</html>
