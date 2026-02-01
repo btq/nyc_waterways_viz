@@ -173,7 +173,7 @@ mvi = function() {
      * 'result' to provide the initial value. After invocation, result holds the interpolated vector vxi, vyi in its
      * 0th and 1st elements, respectively.
      */
-    function inverseDistanceWeighting(points, k) {
+    function inverseDistanceWeighting(points, k, distanceModifier) {
 
         // Build a space partitioning tree to use for quick lookup of closest neighbors.
         var tree = kdTree(points, 2, 0);
@@ -208,6 +208,13 @@ mvi = function() {
                 var neighbor = nearestNeighbors[i];
                 var sample = neighbor.point[2];
                 var d2 = neighbor.distance2;
+                
+                if (distanceModifier) {
+                    var sx = neighbor.point[0];
+                    var sy = neighbor.point[1];
+                    d2 *= distanceModifier(x, y, sx, sy);
+                }
+
                 if (d2 === 0) {  // (x, y) is exactly on top of a point.
                     result[0] = sample[0];
                     result[1] = sample[1];
@@ -218,6 +225,12 @@ mvi = function() {
                 temp[1] = sample[1];
                 result = addVectors(result, scaleVector(temp, weight));
                 weightSum += weight;
+            }
+            
+            // Handle case where total weight is very small (e.g. huge penalties)
+            if (weightSum === 0) {
+                 // Fallback: return 0 vector or keep initial result (usually 0)
+                 return result; 
             }
 
             // Divide by the total weight to calculate an average, which is our interpolated result.
