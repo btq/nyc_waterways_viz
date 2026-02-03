@@ -1,70 +1,98 @@
 # NYC Waterways Visualization
 
-## How Do?
-### Getting the Maps
+A high-performance visualization of tidal currents in New York City's waterways using real-time and historical NOAA data. This project combines GIS processing, data science pipelines, and HTML5 Canvas animation to create an interactive map of tidal flows.
 
-1. Select the Water layer from http://www.census.gov/cgi-bin/geo/shapefiles/index.php
-2. Select New York from the Area Hydrography pulldown. Get the following counties:
-* Kings
-* Queens
-* Bronx
-* New York
-* Richmond
+![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-Go back and select the state of New Jersey and get the following counties:
-* Hudson
-* Bergen
+## Project Overview
 
-###Editing the maps
-Merge all the regional water maps into a single .shp file:
-ogr2ogr merge.shp tl_2013_34003_areawater.shp
-ogr2ogr -update -append merge.shp tl_2013_34017_areawater.shp -nln merge
-foreach f (tl_2013_360*.shp)
-	ogr2ogr -update -append merge.shp $f -nln merge
-end
-ogr2ogr -clipdst -74.0565 40.5440 -73.7800 40.8840 water_merge_clipd.shp merge.shp
+This visualization creates a fluid, animated map where thousands of particles represent the speed and direction of tidal currents. Unlike simple vector fields, this project implements geographically-aware interpolation that respects land masses, ensuring currents flow around islands and peninsulas rather than through them.
 
-Now, use qgis to remove all those beautiful New Jersey rivers and small bodies of water. Then merge all of the NY Harbor, Hudson River, East River, and LI Sound.
+### Key Features
 
-Next, let's work on the land. Download the county/subdivision shapefiles for New York state.  Then select only the regions we want to keep.
-ogr2ogr -where "NAME IN ('Bronx','Queens','Brooklyn','Manhattan')" tl_2013_36_cousub_nyc.shp tl_2013_36_cousub.shp
-ogr2ogr -clipdst -74.0565 40.5440 -73.7800 40.8840 tl_2013_36_cousub_nyc_clipd.shp tl_2013_36_cousub_nyc.shp 
+*   **Real-time Animation:** HTML5 Canvas-based particle system rendering thousands of moving elements.
+*   **Geographic Accuracy:** Custom TopoJSON map derived from US Census Bureau shapefiles, clipped and optimized for the NYC Harbor.
+*   **Physics-Based Interpolation:** Custom Inverse Distance Weighting (IDW) algorithm with "line-of-sight" land avoidance, preventing data bleed across land masses.
+*   **Interactive Controls:** Time travel controls to view past or future tidal conditions, and click-to-inspect functionality for specific location data.
+*   **Data Pipeline:** Python-based ETL pipeline that scrapes NOAA tidal predictions and interpolates continuous flow data from discrete tidal events.
 
-Convert .shp files to GeoJSON, then to topojson
-ogr2ogr -f GeoJSON -s_srs EPSG:4269 -t_srs EPSG:4326 nyc_water.json water_merge_clipd.shp
-ogr2ogr -f GeoJSON -s_srs EPSG:4269 -t_srs EPSG:4326 nyc_land.json tl_2013_36_cousub_nyc_clipd.shp
+## Technical Architecture
 
-topojson --id-property FID -o nyc_water_topo.json nyc_water.json
-topojson --id-property NAME -o nyc_land_topo.json nyc_land.json
+### 1. Geographic Data Processing (Shapefiles)
 
-If we wanted only the Newtown Creek and tributaries, use this command:
-ogr2ogr -f GeoJSON -where "FULLNAME IN ('Newtown Creek', 'Dutch Kill', 'English Kill', 'Maspeth Crk')" -t_srs EPSG:4326 newtown_creek_4326.json merge.shp
-topojson --id-property FULLNAME -o nc_topo.json newtown_creek_4326.json
+The foundation of the visualization is a custom topography map derived from US Census Bureau data.
 
+*   **Source Data:** TIGER/Line Shapefiles (Area Hydrography and County Subdivisions).
+*   **Preprocessing:** Merged and clipped using `ogr2ogr` and QGIS to focus on the NYC harbor (approx. -74.05, 40.54 to -73.78, 40.88).
+*   **Optimization:** Converted to **TopoJSON** format to significantly reduce file size and encode topology.
 
-Update 1/2016:
+### 2. NOAA Data Pipeline
 
-foreach f ( tl_2015_360*.shp )
-	ogr2ogr -update -append areawater_merged.shp $f -nln areawater_merged
-end
+Motion data is derived from the National Oceanic and Atmospheric Administration (NOAA).
 
-ogr2ogr -clipdst -74.0565 40.5440 -73.7800 40.8840 areawater_merged_clip.shp areawater_merged.shp
-ogr2ogr -f GeoJSON -s_srs EPSG:4269 -t_srs EPSG:4326 nyc_areawater.json areawater_merged_clip.shp
-curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-sudo apt-get install -y nodejs
-sudo npm install -g topojson
-qgis
-ogr2ogr -f GeoJSON -s_srs EPSG:4269 -t_srs EPSG:4326 nyc_areawater_clip_edit.json areawater_merged_clip_edit.shp
-topojson --id-property FID -o nyc_water_topo.json nyc_areawater_clip_edit.json
+*   **Data Collection:** Scrapes NOAA predicted tidal events (Slack, Max Flood, Max Ebb) and station metadata.
+*   **Time Series Generation:** Uses cosine interpolation to approximate sinusoidal tidal flows between discrete events:
+    $$ v(t) = \frac{v_{start} - v_{end}}{2} \cos(\pi \cdot t_{ratio}) + \frac{v_{start} + v_{end}}{2} $$
+*   **Partitioning:** Data is partitioned into daily JSON files to optimize client-side loading performance.
 
+### 3. Animation Mathematics (MVI)
 
-SMALLER:
-ogr2ogr -clipdst -74.0367 40.6823 -73.9026 40.8840 areawater_merged_clip_small.shp areawater_merged.shp
-qgis
-ogr2ogr -f GeoJSON -s_srs EPSG:4269 -t_srs EPSG:4326 nyc_areawater_clip_small_edit.json areawater_merged_clip_small_edit.shp
-topojson --id-property FID -o nyc_water_topo_small.json nyc_areawater_clip_small_edit.json
+*   **Vector Field Generation:** Uses **Inverse Distance Weighting (IDW)** to estimate current vectors at every screen pixel based on the nearest $k$ stations.
+*   **Land Mass Avoidance:** Implements a **Line-of-Sight penalty**. The algorithm samples the path between a pixel and a station using the water mask. If land is detected (sampled every 8 pixels for performance), a significant distance penalty is applied, effectively "blocking" the station's influence.
+*   **Heatmap Overlays:** Uses **Thin Plate Spline (TPS)** interpolation for smooth color-coded overlays of current speeds.
 
-There's a limit to the number of regions you can display in the d3 viz, so you will have to manually merge some sections together in qgis.
-After converting to topojson, it may be necessary to change the part of the file after '"objects":'' to: 
-,"objects":{"main":
-the name must be modified to be "main"
+## Installation & Usage
+
+### Prerequisites
+
+*   A standard web server (Apache, Nginx, Python `http.server`, etc.) to serve the static files.
+*   (Optional) Python 3.x for running the data generation tools.
+
+### Running the Visualization
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/btq/nyc_waterways_viz.git
+    ```
+2.  Navigate to the public directory:
+    ```bash
+    cd nyc_waterways_viz/public
+    ```
+3.  Start a local web server. For example, using Python:
+    ```bash
+    python3 -m http.server 8000
+    ```
+4.  Open your browser and navigate to `http://localhost:8000`.
+
+### Data Updates
+
+To generate new data files (e.g., for upcoming years):
+
+1.  Navigate to the tools directory:
+    ```bash
+    cd tools/data_generation
+    ```
+2.  Install dependencies (create a venv recommended):
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *(Note: Ensure you have `beautifulsoup4`, `requests`, `pandas`, `numpy` installed)*
+3.  Run the scraping and generation scripts (refer to individual script headers for usage).
+
+## Directory Structure
+
+*   `public/`: The web application (HTML, CSS, JS) and static data assets.
+    *   `js/`: Core logic including `currents.js` (main app) and `mvi.js` (math library).
+    *   `data/`: TopoJSON maps and partitioned current data.
+*   `tools/`: Python scripts for data scraping and processing.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+*   **NOAA Tides & Currents** for the underlying data.
+*   **US Census Bureau** for geographic shapefiles.
+*   Inspired by the work of **Cameron Beccario** (earth.nullschool.net) and **Fernanda Viégas & Martin Wattenberg** (hint.fm/wind).
